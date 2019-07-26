@@ -14,6 +14,7 @@ const followersNumber = document.querySelector(".followers__number");
 const followersTitle = document.querySelector(".followers__name");
 const followingNumber = document.querySelector(".following__number");
 const followingTitle = document.querySelector(".following__name");
+const dateData = document.querySelector(".date__data");
 
 let adalabMembers;
 let memberData;
@@ -44,9 +45,9 @@ async function getAdalabMembers() {
 
 getAdalabMembers();
 
-function addElementToParent(value, parent) {
-  const dataValue = document.createTextNode(value);
-  parent.appendChild(dataValue);
+function addDataToElement(data, el) {
+  const dataValue = document.createTextNode(data);
+  el.appendChild(dataValue);
 }
 
 function handleUserSelection(e) {
@@ -63,22 +64,24 @@ function handleUserSelection(e) {
         repos: adalabMember.public_repos,
         followers: adalabMember.followers,
         following: adalabMember.following,
-        time: adalabMember.created_at
+        date: adalabMember.created_at
       };
     }
   });
 
   cardImage.src = memberData.avatar;
   cardImage.alt = `Imagen de perfil de ${memberData.name || memberData.login}`;
-  addElementToParent(`@${memberData.login}`, cardUsername);
-  addElementToParent(memberData.name, cardName);
-  addElementToParent(memberData.location, cardLocation);
-  addElementToParent(memberData.repos, reposNumber);
-  addElementToParent("Repos", reposTitle);
-  addElementToParent(memberData.followers, followersNumber);
-  addElementToParent("Followers", followersTitle);
-  addElementToParent(memberData.following, followingNumber);
-  addElementToParent("Following", followingTitle);
+  addDataToElement(`@${memberData.login}`, cardUsername);
+  addDataToElement(memberData.name, cardName);
+  addDataToElement(memberData.location, cardLocation);
+  addDataToElement(memberData.repos, reposNumber);
+  addDataToElement("Repos", reposTitle);
+  addDataToElement(memberData.followers, followersNumber);
+  addDataToElement("Followers", followersTitle);
+  addDataToElement(memberData.following, followingNumber);
+  addDataToElement("Following", followingTitle);
+  addDataToElement(`Miembro desde ${new Date(memberData.date).getFullYear()}`, dateData);
+
 }
 
 select.addEventListener("change", handleUserSelection);
