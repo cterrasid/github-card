@@ -1,68 +1,38 @@
 "use strict";
 
-const base = "https://api.github.com/";
-const adalabMembers = "orgs/Adalab/members?per_page=98";
-const URL = `${base}${adalabMembers}`;
+const URL = "https://api.github.com/orgs/Adalab/members?per_page=99";
 
-const title = document.querySelector("title");
-title.innerHTML = "Directorio de Adalabers en Github";
-
-const body = document.querySelector("body");
-
-//Create main
-const main = document.createElement("main");
-main.classList.add("main__container");
-
-//Create card
-const card = document.createElement("article");
-card.classList.add("card__container");
-
-//Create image
-const image = document.createElement("img");
-
-//Create label
-const label = document.createElement("label");
-label.for = "select-users";
-
-//Create select
-const select = document.createElement("select");
-select.name = "select-users";
-select.id = "select-users";
-
-//Select inside label
-label.appendChild(select);
+const select = document.querySelector("select");
 
 async function getAdalabMembers() {
   const response = await fetch(URL);
   const members = await response.json();
+  const secondResponse = members.map(member =>
+    fetch(member.url).then(res => res.json())
+  );
+  const adalabers = await Promise.all(secondResponse);
 
-  console.log(members);
+  adalabers
+    .sort((a, b) => a.login - b.login)
+    .map(adalaber => {
+      //Create option and user
+      const user = document.createTextNode(adalaber.login);
+      const option = document.createElement("option");
+      option.value = adalaber.login;
+      //User inside option
+      option.appendChild(user);
+      //Option inside select
+      select.appendChild(option);
 
-  members.forEach(member => {
-    //Create option and user
-    const user = document.createTextNode(member.login);
-    const option = document.createElement("option");
-    option.value = member.login;
+      const name = adalaber.name;
 
-    //User inside option
-    option.appendChild(user);
-    //Option inside select
-    select.appendChild(option);
-    //Label inside Main
-    main.appendChild(label);
-    //Main inside Body
-    body.appendChild(main);
-
-    //add elements to card
-    image.src = member.avatar_url;
-    image.alt = member.login;
-
-    //image inside card
-    card.appendChild(image);
-  });
-
-  //card inside main
-  main.appendChild(card);
+      //escucho el cambio del select
+      select.addEventListener("change", handleUserSelection);
+    });
 }
-
 getAdalabMembers();
+
+function handleUserSelection(e) {
+  const { value } = e.currentTarget;
+  
+}
