@@ -30,15 +30,15 @@ async function getAdalabMembers() {
   adalabMembers = users;
 
   adalabMembers
-    .sort((a, b) => a.login - b.login)
+    .sort((a, b) => a.name - b.name)
     .map(adalabMember => {
       //Create option and user
-      const user = document.createTextNode(adalabMember.login);
+      const user = document.createTextNode(
+        adalabMember.name || adalabMember.login
+      );
       const option = document.createElement("option");
       option.value = adalabMember.login;
-      //User inside option
       option.appendChild(user);
-      //Option inside select
       select.appendChild(option);
     });
 }
@@ -46,17 +46,19 @@ async function getAdalabMembers() {
 getAdalabMembers();
 
 function addDataToElement(data, el) {
+  if (el.childNodes.length > 0) {
+    el.removeChild(el.childNodes[0]);
+  }
   const dataValue = document.createTextNode(data);
   el.appendChild(dataValue);
 }
 
-function handleUserSelection(e) {
+function handleSelectChange(e) {
   const { value } = e.currentTarget;
 
   adalabMembers.forEach(adalabMember => {
     if (adalabMember.login === value) {
       memberData = {
-        id: adalabMember.id,
         avatar: adalabMember.avatar_url,
         name: adalabMember.name || adalabMember.login,
         login: adalabMember.login,
@@ -80,8 +82,10 @@ function handleUserSelection(e) {
   addDataToElement("Followers", followersTitle);
   addDataToElement(memberData.following, followingNumber);
   addDataToElement("Following", followingTitle);
-  addDataToElement(`Miembro desde ${new Date(memberData.date).getFullYear()}`, dateData);
-
+  addDataToElement(
+    `Miembro desde ${new Date(memberData.date).getFullYear()}`,
+    dateData
+  );
 }
 
-select.addEventListener("change", handleUserSelection);
+select.addEventListener("change", handleSelectChange);
