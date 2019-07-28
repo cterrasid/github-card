@@ -54,6 +54,8 @@ function addDataToElement(data, el) {
 }
 
 function handleSelectChange(e) {
+  cardContainer.style.display = "flex";
+  
   const { value } = e.currentTarget;
 
   adalabMembers.forEach(adalabMember => {
